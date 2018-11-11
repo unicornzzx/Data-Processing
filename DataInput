@@ -1,0 +1,111 @@
+package cse210cw;
+
+import java.util.Scanner;
+
+/**
+ * Helper class, providing static methods for handling the user's keyboard
+ * input.
+ * <br><br>Can receive following formats of user input:
+ *<ul>
+ * <li>a String</li>
+ * <li>a trimmed String</li>
+ * <li>a String which is not empty after being trimmed</li>
+ * <li>an integer</li>
+ * <li>an integer in given range</li>
+ *</ul>
+ * @author Zhixiang Zhang
+ */
+public class DataInput {
+
+    // A Scanner object, can be used to receive user's input from keyboard in methods.
+    private static Scanner kb = new Scanner(System.in);
+
+    /**
+     * Receive next user input as a string type.
+     *
+     * @return The string value of user's next keyboard input util he/she press
+     * enter.
+     */
+    public static String inputString() {
+        return kb.nextLine();
+    }
+
+    /**
+     * Receive next user input as a string type, and eliminate blank space of
+     * the front and the tail. Base on {@link #inputString() inputString}.
+     *
+     * @return Trimmed value string value of user's next keyboard input.
+     */
+    public static String inputStringTrimmed() {
+        return inputString().trim();
+    }
+
+    /**
+     * Receive next user input as a string type, and eliminate blank space of
+     * the front and the tail, input will be required repeatly util the input is
+     * not empty after being trimmed. Based on
+     * {@link #inputStringTrimmed() inputStringTrimmed}.
+     *
+     * @return Non-empty trimmed string value of user's next keyboard input.
+     */
+    public static String inputStringNotEmpty() {
+        String s = "";
+        boolean validation = false;
+        while (!validation) {
+            s = inputStringTrimmed();
+            if (!s.equals("")) {
+                validation = true;
+            } else {
+                System.out.println("Please try again, the input string can't be empty!");
+            }
+        }
+        return s;
+    }
+
+    /**
+     * Receive next user input as an integer type, input will be required
+     * repeatly util the input can be convert to a integer type. Based on
+     * {@link #inputString() inputString}.
+     *
+     * @return Integer value of user's next keyboard input.
+     */
+    public static int inputInteger() {
+        int i = 0;
+        boolean validation = false;
+        while (!validation) {
+            System.out.println("Enter an integer: ");
+            String s = inputString();
+            try {
+                i = Integer.parseInt(s);
+                validation = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Not a valid integer");
+            }
+        }
+        return i;
+    }
+
+    /**
+     * Receive next user input as an integer type in a given range, input will
+     * be required repeatly util the input can be convert to a integer type in
+     * the given range. Based on {@link #inputInteger() inputInteger}.
+     *
+     * @param lower the lower limit of the integer range
+     * @param upper the upper limit of the integer range
+     * @return Integer value (in the given range) of user's next keyboard input.
+     */
+    public static int inputIntegerRange(int lower, int upper) {
+        int n = 0;
+        boolean validation = false;
+        while (!validation) {
+            n = inputInteger();
+            if (n >= lower && n <= upper) {
+                validation = true;
+            } else {
+                System.out.println("Please enter an integer between " + lower + " and " + upper);
+            }
+        }
+        return n;
+    }
+
+}
