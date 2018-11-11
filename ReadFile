@@ -1,0 +1,97 @@
+package cse210cw;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.HashSet;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+/**
+ * Helper class, for handling the excel file reading and information
+ * abstraction. Provide static methods for reading a excel file with ".xlsx"
+ * format, and abstract information of Researcher data.
+ *
+ * @author Zhixiang Zhang 1509020
+ */
+public class ReadFile {
+
+    /**
+     * Read a excel file with a given file name and abstract required
+     * information.
+     *
+     * @param filename The path of file which will be read, as a string.
+     * @return A LinkedList of {@link Researcher#Researcher Researcher}, each
+     * element of it is consturct by abstracted data in a row of given excel
+     * file.
+     * @throws InvalidFormatException - when the given file name is not end with
+     * "xlsx".
+     * @throws IOException - when there is no file at given path or file is not
+     * existed before the finish of reading.
+     * @throws IllegalStateException - throwed by calling method
+     * {@link #getResearcher(org.apache.poi.ss.usermodel.Row) getResearcher}.
+     */
+    public static LinkedList<Researcher> readFile(String filename) throws InvalidFormatException, IOException, IllegalStateException {
+        File file = new File(filename);
+        LinkedList<Researcher> researchers = new LinkedList();
+        Workbook wb = new XSSFWorkbook(file);
+        Sheet sheet1 = wb.getSheetAt(0);
+        for (int i = sheet1.getFirstRowNum() + 1; i <= sheet1.getLastRowNum(); i++) {
+            Row row = sheet1.getRow(i);
+            if (row != null) {
+                researchers.add(getResearcher(row));
+            }
+        }
+        wb.close();
+        return researchers;
+    }
+
+    /**
+     * Abstract specificed information of a given row, and create a new instance
+     * of {@link Researcher#Researcher Researcher} with abstracted data.
+     *
+     * @param row Target row in sheet will be read.
+     * @return A new instance of {@link Researcher#Researcher Researcher}
+     * created with abstracted data.
+     * @throws IOException - when there is no file at given path or file is not
+     * existed before the finish of reading.
+     * @throws IllegalStateException - when try to get String value from a
+     * non-String cell.
+     */
+    public static Researcher getResearcher(Row row) throws IOException, IllegalStateException {
+        int[] column = {0, 1, 2, 10, 11};
+        ArrayList<String> temp = new ArrayList();
+        for (int col : column) {
+            Cell cell = row.getCell(col);
+            if (cell == null) {
+                temp.add("");
+            } else {
+                temp.add(cell.getStringCellValue());
+            }
+        }
+        String university = temp.get(0);
+        String department = temp.get(1);
+        String name = temp.get(2);
+        HashSet<String> interests = new HashSet();
+        String rawInterests = temp.get(3) + "," + temp.get(4);
+        for (String split : rawInterests.split(",")) {
+            if (!split.trim().equals("")) {
+                // only add non-empty String
+                interests.add(split.trim().toLowerCase());
+                // convert all interests to lowercase, eliminate the overlap 
+            }
+        }
+        if (interests.isEmpty()) {
+            //for those researcher who has no interest, add a empty String to their HashSet of interests
+            interests.add("");
+        }
+
+        Researcher researcher = new Researcher(name, university, department, interests);
+        return researcher;
+    }
+}
