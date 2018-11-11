@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Helper class, calculatethe cos similarity between two HashSets with String
- * elements.
+ * elements. 
  *
  * @author Zhixiang.Zhang
  */
